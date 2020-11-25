@@ -2,6 +2,9 @@
 
 [이전 브랜치 여기서 볼 수 있습니다.](https://github.com/yuny0623/opensource_project_bs4)
 
+내려받은 뒤에 Python38에 Lib -> site-packages에 폴더를 위치시키면 
+from bs4 import bs4expand 로 사용가능하다. 
+
 bs4expand
 ==========
 
