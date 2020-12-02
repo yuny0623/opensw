@@ -4,11 +4,8 @@ from random import randint
 from bs4 import BeautifulSoup
 from urllib.request import urlretrieve
 import warnings
-
-#새기능 추가에 필요한 import 
-#from bs4 import BeautifulSoup
+import os
 from datetime import datetime
-#import requests
 import pandas as pd
 import re
 
@@ -45,8 +42,10 @@ def count_word(out_word_list):
     global word_count          #함수 외부의 word_count에 접근하기 위해 global 사용
     global word_to_find        #함수 외부의 word_to_find 에 접근하기 위해 global 사용
                             #전역으로 선언된 변수가 함수에서 사용되면 무조건 global 사용 
+    print(word_to_find)
+    word_count=0
     for i in range(len(w_li)):    
-        if word_to_find.find(w_li[i]):   
+        if word_to_find.lower() == w_li[i].lower():   
             word_count+=1 
     return word_count
 
@@ -171,7 +170,7 @@ def show_page_include_word(y_list): #전체 리스트인 y_list
         for j in range(len(soup_list[i])):
             # 2020.10.30 -> word_to_find in soup_list[i][j]: 에서 find로 바꿔줬음.
             # 애초에 요소는 text로 정렬된 str형태이므로 find를 통해 탐색하는 게 더 정확함.  
-            if word_to_find.find(soup_list[i][j]):  
+            if word_to_find.lower() in soup_list[i][j].lower():
                 store_url_location.append(y_list[i*10+j])
     return store_url_location
         
@@ -203,9 +202,9 @@ def make_set_of_word(single_url): #여기서 single_url은 리스트가 아닌 �
     double_list_soup = []                    #이중 리스트 생성 예정   
     
     for i in range(len(category_list)):     #15번반복됨. 카테고리가 15개이기 때문에 
-        print(str(i)+" --> in catagory for code")
+        #print(str(i)+" --> in catagory for code")
         url_in_here = s+category_list[i]            #카테고리별로 단어를 url에 추가해준다. 
-        print(url_in_here)
+        #print(url_in_here)
         html_doc = requests.get(url_in_here).text    
         soup = BeautifulSoup(html_doc,'html.parser') #연관단어 페이지의  soup객체 
         href_list = []                      #값을 전달하기 위해 임시로 사용한 list객체 
@@ -228,7 +227,7 @@ def make_set_of_word(single_url): #여기서 single_url은 리스트가 아닌 �
     # print() 
     # print("appending word is finish")
 
-    print()
+    #print()
     for i in range(len(double_list_soup)): #15번 반복됨. 
         for j in range(len(double_list_soup[i])): #얘는 502인경우도 있고, 그보다 작은 경우도 있음. 
             if double_list_soup[i][j].startswith('/'): #단어이면 실행한다. 단어에는 /가 붙어서 값이 전달되기 때문에 /를 없애줘야 한다. 
@@ -241,7 +240,7 @@ def make_set_of_word(single_url): #여기서 single_url은 리스트가 아닌 �
 
     #print("sorting double_list_soup is finished")
     #print(len(double_list_soup[0]))
-    print()
+    #print()
 
     #페이지를 분석하기 위한 for문 
     #double_list_soup 내의 단어를 soup_url 즉 (사이트에 관한 split된 soup객체)가 포함하고 있다면 
@@ -253,12 +252,12 @@ def make_set_of_word(single_url): #여기서 single_url은 리스트가 아닌 �
 
     #number_count에서 가장 큰 수를 찾아내고, 그 위치 즉 인덱스를 저장한다. 
     for i in range(len(number_count)):
-        print(number_count[i])
+        #print(number_count[i])
         if number_count[i] == max(number_count):
             index = i
 
     #출력문
-    print(str(max(number_count))+" is in "+str(index)+" location")
+    #print(str(max(number_count))+" is in "+str(index)+" location")
 
     #반환할 문자열이다. 결론이다. 해당페이지가 카테고리 중 어느 카테고리에 가장 큰 비중을 갖는 지를 할당한다. 
     conclusion_str = "The page is about " + category_list[index] #분석에 대한 결과 (어떤 페이지 인지. )
@@ -308,8 +307,8 @@ def image_take(url):
     #C:\Python38\Lib\site-packages\bs4\collected_info_in_here
     #warnings.filterwarnings(action = 'ignore')
     # open 내에 경로는 항상 백슬래쉬 두개로 써주기. -> \\ 안하면 경고표시뜸. 
-    f = open("C:/Python38/Lib/site-packages/bs4/collected_info_in_here/image_file.html",mode = "wt",encoding="utf-8")
-
+    open_path_1 = os.path.join(os.getcwd(),'bs4','collected_info_in_here','image_file.html')
+    f = open(open_path_1,mode = "wt",encoding="utf-8")
     for i in range(len(li)): #리스트의 길이만큼 반복한다. 즉 페이지에 있는 이미지태그의 개수만큼 반복 
         if li[i] == None:    #가끔 이미지태그에서 긁어온 값인데 값 자체가 None을 반환하는 경우가 있다. 
                             #이 경우에 무조건 에러가 발생함. 
@@ -355,7 +354,8 @@ def html_link_file(url_list,selected_list):
     </body>
     </html>'''
 
-    f = open("C:/Python38/Lib/site-packages/bs4/collected_info_in_here/html_file.html",mode = "wt",encoding="utf-8")
+    open_path_2 = os.path.join(os.getcwd(),'bs4','collected_info_in_here','html_file.html')
+    f = open(open_path_2,mode = "wt",encoding="utf-8")
     for i in range(len(url_list)):
         html_doc_middle +=('<a href = "'+url_list[i]+'">'+url_list[i]+"</a>"+"\n"+"<br>")
 
@@ -409,7 +409,7 @@ def to_text(url_from_out):
     #해당되는 기호들이 있으면 제거한다. word_list에 정리된 단어들을 할당한다. 
     word_list = []
     for word in soup_str_translate:
-        symbols = """▶↑~!@#$%^&*()_-+={[}]|\\;:"‘'·<>?/.,ⓒ """ 
+        symbols = """▶↑~!@#$%^&*()_-+={[}]|\\;:"‘'·<>?/.,ⓒ`→✓""" 
         for i in range(len((symbols))):
 
             #해당 symbols내의 기호가 있으면 '' 내부의 것으로 바꾼다. 
@@ -460,7 +460,7 @@ def contents_cleansing(contents):
                                        first_cleansing_contents).strip()#뒤에 필요없는 부분 제거 (새끼 기사)
     third_cleansing_contents = re.sub('<.+?>', '', second_cleansing_contents).strip()
     contents_text.append(third_cleansing_contents)
-    print(contents_text)
+    #print(contents_text)
     
 
 def crawler(maxpage,query,sort,s_date,e_date):
@@ -475,7 +475,7 @@ def crawler(maxpage,query,sort,s_date,e_date):
         
         response = requests.get(url)
         html = response.text
-        print(response)
+        #print(response)
         #뷰티풀소프의 인자값 지정
         soup = BeautifulSoup(html, 'html.parser')
  
@@ -483,54 +483,56 @@ def crawler(maxpage,query,sort,s_date,e_date):
         atags = soup.select(".news_tit")
         
         #atags = soup.select('._sp_each_title')
-        print(atags)
+        #print(atags)
         for atag in atags:
             title_text.append(atag.text)     #제목
-            print('제목')
-            print(atag.text)
+            #print('제목')
+            #print(atag.text)
             link_text.append(atag['href'])   #링크주소
-            print('링크주소')
-            print(atag['href'])
+            #print('링크주소')
+            #print(atag['href'])
             
         #신문사 추출
         source_lists = soup.select('.info.press')
         for source_list in source_lists:
             source_text.append(source_list.text)    #신문사
-            print('신문사')
-            print(source_list.text)      
+            #print('신문사')
+            #print(source_list.text)      
         
         #본문요약본
         contents_lists = soup.select('.dsc_wrap')
         for contents_list in contents_lists:
             #print('==='*40)
-            print('본문요약본')
+            #print('본문요약본')
             contents_cleansing(contents_list) #본문요약 정제화
 
         #모든 리스트 딕셔너리형태로 저장
         result= { "title":title_text ,  "source" : source_text ,"contents": contents_text ,"link":link_text }  
-        print('결과')
+        #print('결과')
 
-        print(page)
+        #print(page)
         df = pd.DataFrame(result)
         
         page += 10 
     
     # 새로 만들 파일이름 지정
     #df = pd.DataFrame(result)  #df로 변환
-    outputFileName = '%s-%s-%s'% (now.year, now.month, now.day)+query+'merging.xlsx'
-    df.to_excel(outputFileName,sheet_name='sheet1')
+    outputFileName = '%s-%s-%s_'% (now.year, now.month, now.day)+query+'_merging.xlsx'
+    open_path_3 = os.path.join(os.getcwd(),'bs4','collected_info_in_here',outputFileName)
+    df.to_excel(open_path_3,sheet_name='sheet1')
     
     print(df)
 
 def main():
-    info_main = input("="*50+"\n"+"입력 형식에 맞게 입력해주세요."+"\n"+" 시작하시려면 Enter를 눌러주세요."+"\n"+"="*50)
+    input("="*50+"\n"+" 시작하시려면 Enter를 눌러주세요."+"\n"+"="*50)
     
     maxpage = input("최대 크롤링할 페이지 수 입력하시오: ")  
     query = input("검색어 입력: ")  
     sort = input("뉴스 검색 방식 입력(관련도순=0  최신순=1  오래된순=2): ")    #관련도순=0  최신순=1  오래된순=2
-    s_date = input("시작날짜 입력(2019.01.04):")  #2019.01.04
-    e_date = input("끝날짜 입력(2019.01.05):")   #2019.01.05
+    s_date = input("시작날짜 입력(xxxx.xx.xx):")  #2019.01.04
+    e_date = input("끝날짜 입력(xxxx.xx.xx):")   #2019.01.05
     
     crawler(maxpage,query,sort,s_date,e_date) 
     
+
 
